@@ -13,17 +13,19 @@
             .then(response => response.json())
             .then(data => {
                 if (data.redirectUrl) {
-                    window.location.href = data.redirectUrl;  // Redirect to the URL from config.json
+                    // Redirect to the URL from config.json
+                    window.location.href = data.redirectUrl;
                 } else {
+                    // In case redirect URL is missing, throw an error
                     throw new Error('Redirect URL not found in config.json');
                 }
             })
             .catch(error => {
+                // If fetching the URL fails, show the fallback link and error message
                 console.error("Error:", error);
-                // If fetching fails, show the fallback link and error message
                 document.body.innerHTML = `
                     <p>If you are not redirected, please wait or contact support. 
-                    <a href="${error.fallbackUrl || 'https://www.baps.org/home.aspx'}">Click here</a>.</p>`;
+                    <a href="${data.fallbackUrl || 'https://www.baps.org/developingindividuals.aspx'}">Click here</a>.</p>`;
             });
     </script>
 </head>
