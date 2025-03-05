@@ -1,3 +1,4 @@
 {
-  "redirectUrl": "https://www.baps.org/developingindividuals.aspx"
+  "redirectUrl": "https://www.baps.org/developingindividuals.aspx",
+  "fallbackUrl": "https://www.baps.org/home.aspx"
 }
