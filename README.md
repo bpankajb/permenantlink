@@ -26,46 +26,32 @@ This file handles the redirection logic. It fetches the `config.json` file to ge
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecting...</title>
     <script>
-      // Adding timestamp to prevent caching issues
-      const timestamp = new Date().getTime();
+        // Adding a timestamp query parameter to avoid caching issues
+        const timestamp = new Date().getTime();  
 
-      // Fetching the config.json file dynamically to avoid caching (timestamp appended)
-      fetch(`config.json?t=${timestamp}`) 
-        .then(response => response.json()) // Parsing the response as JSON
-        .then(data => {
-          // Extract the redirect URL from config.json
-          const redirectUrl = data.redirectUrl; 
-          
-          // Fetch the redirection URL from the backend API
-          fetch(redirectUrl) 
-            .then(response => response.json()) // Backend returns a JSON with the final URL
-            .then(redirectData => {
-              // Perform the redirection by updating the window location
-              window.location.href = redirectData.url;
+        // Correct URL to fetch config.json from the raw GitHub Pages URL
+        fetch(`https://raw.githubusercontent.com/bpankajb/permenantlink/main/config.json?t=${timestamp}`)
+            .then(response => response.json())  // Parse the JSON response
+            .then(data => {
+                if (data.redirectUrl) {
+                    window.location.href = data.redirectUrl;  // Redirect to the URL in config.json
+                } else {
+                    throw new Error('Redirect URL not found in config.json');
+                }
             })
             .catch(error => {
-              console.error("Error fetching redirect URL:", error);
-              // If there's an issue fetching the URL, display an error message with a clickable link
-              document.body.innerHTML = `
-                <h1>Something went wrong</h1>
-                <p>If you are not redirected, please <a href="${redirectUrl}" target="_blank">click here</a> to go to the destination.</p>
-              `;
+                console.error("Error:", error);
+                // If the fetch fails, display a message to the user with a fallback link
+                document.body.innerHTML = `<p>If you are not redirected, please wait or contact support. Error: ${error.message}</p>`;
             });
-        })
-        .catch(error => {
-          console.error("Error fetching config:", error);
-          // If there's an issue fetching config.json, display an error message with a clickable link
-          document.body.innerHTML = `
-            <h1>Something went wrong</h1>
-            <p>If you are not redirected, please <a href="${redirectUrl}" target="_blank">click here</a> to go to the destination.</p>
-          `;
-        });
     </script>
 </head>
 <body>
-    <p>If you are not redirected, please wait or contact support.</p>
+    <!-- A fallback link in case the redirection fails -->
+    <p>If you are not redirected, <a href="https://www.example.com">click here</a>.</p>
 </body>
 </html>
+
 ```
 
 #### **Explanation**:
