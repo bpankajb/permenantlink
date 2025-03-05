@@ -12,7 +12,7 @@ app.get("/api/getRedirect", (req, res) => {
   });
 
   // Change the URL dynamically here (this is where the URL can be modified)
-  res.json({ url: "https://your-new-destination.com" }); // <-- Update this URL whenever you need a new redirect
+  res.json({ url: "https://www.baps.org/news" }); // <-- Update this URL whenever you need a new redirect
 });
 
 app.listen(port, () => {
