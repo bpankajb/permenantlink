@@ -3,25 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting...</title>
     
-    <!-- Set a meta refresh as a fallback -->
-    <meta http-equiv="refresh" content="0; URL='https://www.baps.org/'" />
-
-    <script>
-        // Force update by preventing browser cache
-        var newLink = "https://www.baps.org/" + new Date().getTime();
-        
-        // Redirect immediately
-        window.location.href = newLink;
-    </script>
+    <!-- Update the URL below to your desired destination -->
+    <meta http-equiv="refresh" content="0; url=https://example.com">
+    
+    <title>Redirecting...</title>
 </head>
 <body>
-    <p>Redirecting... If not redirected, <a id="manualLink" href="https://www.baps.org/">click here</a>.</p>
-    
+    <p>If you are not redirected, <a href="https://example.com">click here</a>.</p>
+
     <script>
-        // Update manual link to avoid caching issues
-        document.getElementById("manualLink").href = newLink;
+        // Update the URL below to your desired destination
+        window.location.href = "https://example.com";
     </script>
 </body>
 </html>
