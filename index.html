@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecting...</title>
     <script>
-        // Adding a timestamp to avoid caching issues (forces browser to fetch the latest config)
-        const timestamp = new Date().getTime();
+        // Adding a timestamp down to milliseconds to avoid caching issues (forces browser to fetch the latest config)
+        const timestamp = Date.now();  // Returns timestamp with millisecond precision
         
         // Fetch the config.json file containing the redirection URL
         fetch(`https://raw.githubusercontent.com/bpankajb/permenantlink/main/config.json?t=${timestamp}`)
@@ -24,17 +24,18 @@
                 // If fetching the URL fails, show the fallback link and error message
                 console.error("Error:", error);
                 
-                // If no fallback URL is found in config.json, use the default
-                const fallbackUrl = data.fallbackUrl || ''; // No fallback URL hardcoded here
+                // Use the fallback URL from config.json instead of hardcoding it
+                const fallbackUrl = data.fallbackUrl || '';  // Fallback URL from config.json
                 
                 if (fallbackUrl) {
                     // Update the body to display an error message and clickable fallback link
-                    document.body.innerHTML = `
+                    document.body.innerHTML = ` 
                         <p>If you are not redirected, please wait or contact support. 
                         <a href="${fallbackUrl}">Click here</a>.</p>`;
                 } else {
-                    // If no fallback URL is found, just show a generic message
-                    document.body.innerHTML = `<p>Error: No redirection URL or fallback available.</p>`;
+                    // In case fallback URL is also not provided, show a generic message
+                    document.body.innerHTML = ` 
+                        <p>If you are not redirected, please wait or contact support.</p>`;
                 }
             });
     </script>
