@@ -24,13 +24,18 @@
                 // If fetching the URL fails, show the fallback link and error message
                 console.error("Error:", error);
                 
-                // Use the fallback URL from config.json (not hardcoded)
-                const fallbackUrl = data.fallbackUrl || 'https://www.baps.org/developingindividuals.aspx';  // Default fallback URL
+                // If no fallback URL is found in config.json, use the default
+                const fallbackUrl = data.fallbackUrl || ''; // No fallback URL hardcoded here
                 
-                // Update the body to display an error message and clickable fallback link
-                document.body.innerHTML = `
-                    <p>If you are not redirected, please wait or contact support. 
-                    <a href="${fallbackUrl}">Click here</a>.</p>`;
+                if (fallbackUrl) {
+                    // Update the body to display an error message and clickable fallback link
+                    document.body.innerHTML = `
+                        <p>If you are not redirected, please wait or contact support. 
+                        <a href="${fallbackUrl}">Click here</a>.</p>`;
+                } else {
+                    // If no fallback URL is found, just show a generic message
+                    document.body.innerHTML = `<p>Error: No redirection URL or fallback available.</p>`;
+                }
             });
     </script>
 </head>
