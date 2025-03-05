@@ -1,22 +1,48 @@
-Certainly! Below is the **complete structure of the files** you should have in your main branch to implement the solution. These files will include:
+Yes, exactly! If you want to use **only one GitHub Page URL** and **one variable URL** (for example, the backend URL that you want to dynamically change), the approach still works, but with a simplified process. 
 
-1. **`index.html`** (Frontend)
-2. **`server.js`** (Backend API using Node.js)
-3. **`package.json`** (For dependencies)
+In this case:
+- **You will have only one GitHub Pages URL** for your HTML file (the URL that points to your `index.html` file).
+- **You will change the backend URL** in the `config.json` file to reflect the dynamic redirect logic.
 
-### **File Structure**
+### **What Changes Are Required in the Above Solution?**
+
+### **1. The GitHub Pages URL**:
+This is your fixed URL that you will use for the published page (the URL where `index.html` is hosted on GitHub Pages). You **do not need to change** this unless you change your repository or its configuration.
+
+For example:
+- Your GitHub Pages URL might look like this: `https://username.github.io/repository-name/`
+
+This URL will **never need to change** unless you change your repository setup.
+
+### **2. The Single Backend URL**:
+Instead of hardcoding the backend URL in multiple places in your HTML or JavaScript, we use **`config.json`** to store it in one place. So, when you want to change the backend URL, **you only need to update it in the `config.json` file**.
+
+### **Updated Solution for One URL and One Variable**
+
+Here's the updated approach for the setup you requested:
+
+### **File Structure**:
 ```
 /main-branch/
   ├── index.html
-  ├── server.js
-  └── package.json
+  ├── config.json
+  └── server.js (Backend API)
 ```
 
----
+### **1. `config.json` (No changes)**:
+This JSON file contains the backend URL, fallback URL, and manual redirect URL. Whenever you want to update the backend URL (or any other URL), just change it in the `config.json` file.
 
-### **1. `index.html` (Frontend)**
+```json
+{
+  "backendUrl": "https://your-backend.com/api/getRedirect", // The backend URL to fetch the redirect URL
+  "fallbackUrl": "https://www.baps.org/home.aspx", // Fallback URL if the API call fails
+  "manualRedirectUrl": "https://www.baps.org/home.aspx" // Manual redirect link URL
+}
+```
 
-This is the file that will be hosted on GitHub Pages (or any static hosting service). It dynamically fetches the URL from your backend.
+### **2. `index.html`** (The URL will dynamically load from `config.json`):
+
+You can leave your `index.html` file as is (with a small adjustment to ensure that it works for a **single GitHub Page URL**):
 
 ```html
 <!DOCTYPE html>
@@ -29,125 +55,92 @@ This is the file that will be hosted on GitHub Pages (or any static hosting serv
     <meta http-equiv="Expires" content="0">
     <title>Redirecting...</title>
     <script>
-        // Modify this URL to change the backend that provides the redirect URL
-        const backendUrl = "https://your-backend.com/api/getRedirect"; // <-- Update this when you change the backend URL
-        
-        fetch(backendUrl + "?t=" + new Date().getTime()) // Cache-busting query using timestamp
+        // Fetch the configuration from the config.json file
+        fetch('config.json')
             .then(response => response.json())
-            .then(data => {
-                window.location.href = data.url;  // Perform the redirect to the new URL
+            .then(config => {
+                // Now the URLs are available in the 'config' object
+                const backendUrl = config.backendUrl;
+                const fallbackUrl = config.fallbackUrl;
+                const manualRedirectUrl = config.manualRedirectUrl;
+
+                // Fetch the redirect URL from the backend
+                fetch(backendUrl + "?t=" + new Date().getTime()) // Cache-busting query using timestamp
+                    .then(response => response.json())
+                    .then(data => {
+                        window.location.href = data.url;  // Perform the redirect to the new URL
+                    })
+                    .catch(error => {
+                        console.error("Error fetching redirect URL:", error);
+                        window.location.href = fallbackUrl;  // Use fallback URL if API fails
+                    });
+
+                // Update the manual redirect link
+                document.getElementById('manualRedirectLink').href = manualRedirectUrl;
             })
             .catch(error => {
-                console.error("Error fetching redirect URL:", error);
-                window.location.href = "https://www.baps.org/home.aspx";  // Fallback URL
+                console.error("Error loading config:", error);
+                window.location.href = "https://www.baps.org/home.aspx";  // Default fallback in case config fails
             });
     </script>
 </head>
 <body>
-    <p>If you are not redirected, <a href="https://www.baps.org/home.aspx">click here</a>.</p>
+    <p>If you are not redirected, <a id="manualRedirectLink" href="#">click here</a>.</p>
 </body>
 </html>
 ```
 
-#### **Where to update the backend URL**:
-- **Line 15:** The variable `backendUrl` holds the URL of your backend API. Each time you change the backend URL, you need to update this value in `index.html`.
-    ```js
-    const backendUrl = "https://your-backend.com/api/getRedirect"; // <-- Update this when you change the backend URL
-    ```
+### **3. **No Changes to the GitHub Pages URL**:
+Your GitHub Pages URL (the page where the `index.html` is published) does not need to change. For example, if your repository's name is `redirector` and your GitHub username is `username`, your URL might look like this:
 
----
-
-### **2. `server.js` (Backend API using Node.js)**
-
-This is your backend that serves the dynamic redirect URL. This backend will be responsible for sending the redirect URL in response to the frontend's request.
-
-#### **Node.js (Express) Backend Code:**
-```js
-const express = require('express');
-const app = express();
-const port = 3000;
-
-// Endpoint to return the redirect URL
-app.get("/api/getRedirect", (req, res) => {
-  // Set headers to avoid caching
-  res.set({
-    "Cache-Control": "no-cache, no-store, must-revalidate",
-    "Pragma": "no-cache",
-    "Expires": "0"
-  });
-
-  // Change the URL dynamically here (this is where the URL can be modified)
-  res.json({ url: "https://your-new-destination.com" }); // <-- Update this URL whenever you need a new redirect
-});
-
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
-});
+```
+https://username.github.io/redirector/
 ```
 
-#### **Where to update the backend URL**:
-- **Line 15:** The `res.json({ url: "https://your-new-destination.com" });` is where you define the redirect URL. Each time you want to change the destination URL, you modify this value.
-    ```js
-    res.json({ url: "https://your-new-destination.com" }); // <-- Update this URL whenever you need a new redirect
-    ```
+- This URL is **static** and will not change unless you change the GitHub repository or its settings.
 
 ---
 
-### **3. `package.json` (For Node.js Project Dependencies)**
+### **How It Works:**
 
-This file is necessary for managing dependencies, particularly for running the server. Make sure you have the **Express** library installed.
+1. **Backend URL:** The backend URL (which is the URL where your server API is hosted) is stored in the `config.json` file.
+   - You update the backend URL by changing it in the `config.json` file. 
+   - The frontend (`index.html`) fetches this URL and uses it dynamically.
+
+2. **Dynamic Redirect:** Your `index.html` file will load the configuration from `config.json`:
+   - The `backendUrl` is used to make a `fetch` request to your backend.
+   - If the backend returns a valid redirect URL, the page will automatically redirect.
+   - If there is an error, it will use the fallback URL.
+
+3. **Manual URL:** If the automatic redirect doesn't happen, the user can click on the fallback link (`<a id="manualRedirectLink" href="#">click here</a>`), which will use the `manualRedirectUrl` from `config.json`.
+
+### **What You Need to Update:**
+
+1. **Backend URL** in `config.json` when you change the API or backend URL. **No changes to the code or HTML are required** for that.
+2. **Fallback URL** and **Manual URL** in `config.json` if you change the fallback link. Again, you only need to update the `config.json` file.
+
+---
+
+### **Example of Update in `config.json`:**
+Suppose you want to change your backend URL:
+
+1. Update the **backend URL** in `config.json` like so:
 
 ```json
 {
-  "name": "redirect-backend",
-  "version": "1.0.0",
-  "description": "Backend for dynamic redirects",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "express": "^4.17.1"
-  },
-  "author": "Your Name",
-  "license": "ISC"
+  "backendUrl": "https://new-backend.com/api/getRedirect", // New backend URL
+  "fallbackUrl": "https://www.example.com/fallback", // Fallback URL
+  "manualRedirectUrl": "https://www.example.com/manual" // Manual link URL
 }
 ```
 
----
-
-### **Steps to Set Up**
-
-1. **Create and Configure Your Backend**:
-   - In the main branch of your project, create a new file called `server.js` and paste the backend code there.
-   - Create the `package.json` file and run `npm install` to install the necessary dependencies (Express).
-   - Start the server using `npm start`.
-
-2. **Configure GitHub Pages for the Frontend**:
-   - Upload your `index.html` to GitHub Pages (or any static hosting platform) so that it is served to users. This file will dynamically fetch the redirect URL from your backend.
-
-3. **Update the URL**:
-   - Every time you need to change the redirect destination, you **update the `backendUrl`** in `index.html` and **modify the URL in `server.js`** (inside `res.json()`).
-   
-   - For example, if the destination changes from `https://new-url.com` to `https://another-url.com`, you would:
-     - **In `server.js`:**
-       ```js
-       res.json({ url: "https://another-url.com" });
-       ```
-     - **In `index.html`:**
-       ```js
-       const backendUrl = "https://new-backend-url.com/api/getRedirect"; // If backend changes
-       ```
+2. **No changes required in `index.html` or GitHub Pages URL**! Just update `config.json`, and everything will work seamlessly.
 
 ---
 
-### **Optional: Hosting Your Backend**
-- If you're hosting the backend (e.g., on **Heroku**, **Vercel**, or any cloud platform), replace `https://your-backend.com` with the URL provided by your hosting service.
+### **Summary**:
+- **Single URL for GitHub Pages**: The URL for your published page (on GitHub Pages) will stay the same.
+- **Single Backend URL**: The only place you need to update the backend URL is in `config.json`.
+- **Dynamic URL Loading**: The `index.html` dynamically loads the URLs from `config.json`, making it simple to update without touching the HTML/JavaScript each time.
 
----
-
-### **Final Note**:
-- **Frontend (GitHub Pages)**: Always update the URL in `index.html` if you change the backend.
-- **Backend**: Update the redirect URL in `server.js` whenever you want to change the target redirect.
-
-By following this structure, you will have a fully dynamic redirect system that doesn't rely on static file changes for every redirect update. 😊
+This will streamline the process and make updates easier since everything depends on just one `config.json` file. Let me know if you need further clarification or assistance! 😊
