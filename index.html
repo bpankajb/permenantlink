@@ -23,7 +23,9 @@
             .catch(error => {
                 // If fetching the URL fails, show the fallback link and error message
                 console.error("Error:", error);
-                const fallbackUrl = 'https://docs.google.com/forms/d/1h0OXTfsgDRuZkviRAOjhxlAU59ekJ3GW32_FoIm2zRs/edit';  // Fallback URL
+                
+                // Use the fallback URL from config.json (not hardcoded)
+                const fallbackUrl = data.fallbackUrl || 'https://www.baps.org/developingindividuals.aspx';  // Default fallback URL
                 
                 // Update the body to display an error message and clickable fallback link
                 document.body.innerHTML = `
