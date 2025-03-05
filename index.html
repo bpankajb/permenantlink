@@ -8,21 +8,36 @@
     <meta http-equiv="Expires" content="0">
     <title>Redirecting...</title>
     <script>
-        // Modify this URL to change the backend that provides the redirect URL
-        const backendUrl = "https://www.baps.org/news"; // <-- Update this when you change the backend URL
-        
-        fetch(backendUrl + "?t=" + new Date().getTime()) // Cache-busting query using timestamp
+        // Fetch the configuration from the config.json file
+        fetch('config.json')
             .then(response => response.json())
-            .then(data => {
-                window.location.href = data.url;  // Perform the redirect to the new URL
+            .then(config => {
+                // Now the URLs are available in the 'config' object
+                const backendUrl = config.backendUrl;
+                const fallbackUrl = config.fallbackUrl;
+                const manualRedirectUrl = config.manualRedirectUrl;
+
+                // Fetch the redirect URL from the backend
+                fetch(backendUrl + "?t=" + new Date().getTime()) // Cache-busting query using timestamp
+                    .then(response => response.json())
+                    .then(data => {
+                        window.location.href = data.url;  // Perform the redirect to the new URL
+                    })
+                    .catch(error => {
+                        console.error("Error fetching redirect URL:", error);
+                        window.location.href = fallbackUrl;  // Use fallback URL if API fails
+                    });
+
+                // Update the manual redirect link
+                document.getElementById('manualRedirectLink').href = manualRedirectUrl;
             })
             .catch(error => {
-                console.error("Error fetching redirect URL:", error);
-                window.location.href = "https://www.baps.org/news";  // Fallback URL
+                console.error("Error loading config:", error);
+                window.location.href = "https://www.baps.org/home.aspx";  // Default fallback in case config fails
             });
     </script>
 </head>
 <body>
-    <p>If you are not redirected, <a href="https://www.baps.org/news">click here</a>.</p>
+    <p>If you are not redirected, <a id="manualRedirectLink" href="#">click here</a>.</p>
 </body>
 </html>
