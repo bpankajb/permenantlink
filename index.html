@@ -3,24 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Update the URL below to your desired destination -->
-    <meta http-equiv="refresh" content="0; url=https://myapps.na.baps.org/pbr/login?v=1234">
-    
     <title>Redirecting...</title>
+    <script>
+      fetch("https://your-backend.com/api/getRedirect") // API to get the redirect URL
+        .then(response => response.json())
+        .then(data => {
+          window.location.href = data.url;
+        })
+        .catch(error => {
+          console.error("Error fetching redirect URL:", error);
+          window.location.href = "https://default-url.com"; // Fallback URL
+        });
+    </script>
 </head>
 <body>
-    <p>If you are not redirected, <a href="https://myapps.na.baps.org/pbr/login?v=1234">click here</a>.</p>
-
-    <script>
-        // Generate a random cache-busting query string
-        var cacheBuster = new Date().getTime();
-        
-        // Update the URL below to your desired destination
-        var newURL = "https://example.com?v=" + cacheBuster;
-        
-        // Redirect to the updated URL
-        window.location.href = newURL;
-    </script>
+    <p>If you are not redirected, <a href="https://default-url.com">click here</a>.</p>
 </body>
 </html>
