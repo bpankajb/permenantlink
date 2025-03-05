@@ -1,0 +1,5 @@
+{
+  "backendUrl": "https://your-backend.com/api/getRedirect", // The backend URL to fetch the redirect URL
+  "fallbackUrl": "https://www.baps.org/home.aspx", // Fallback URL if the API call fails
+  "manualRedirectUrl": "https://www.baps.org/home.aspx" // Manual redirect link URL
+}
