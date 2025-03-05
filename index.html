@@ -5,16 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Update the URL below to your desired destination -->
-    <meta http-equiv="refresh" content="0; url=https://example.com">
+    <meta http-equiv="refresh" content="0; url=https://example.com?v=1234">
     
     <title>Redirecting...</title>
 </head>
 <body>
-    <p>If you are not redirected, <a href="https://example.com">click here</a>.</p>
+    <p>If you are not redirected, <a href="https://example.com?v=1234">click here</a>.</p>
 
     <script>
+        // Generate a random cache-busting query string
+        var cacheBuster = new Date().getTime();
+        
         // Update the URL below to your desired destination
-        window.location.href = "https://example.com";
+        var newURL = "https://example.com?v=" + cacheBuster;
+        
+        // Redirect to the updated URL
+        window.location.href = newURL;
     </script>
 </body>
 </html>
