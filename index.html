@@ -5,28 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecting...</title>
     <script>
-        // Adding a timestamp query parameter to avoid caching issues
-        const timestamp = new Date().getTime();  
-
-        // Correct URL to fetch config.json from the raw GitHub Pages URL
+        // Adding a timestamp to avoid caching issues
+        const timestamp = new Date().getTime();
+        
+        // Fetch the config.json file containing the redirection URL
         fetch(`https://raw.githubusercontent.com/bpankajb/permenantlink/main/config.json?t=${timestamp}`)
-            .then(response => response.json())  // Parse the JSON response
+            .then(response => response.json())
             .then(data => {
                 if (data.redirectUrl) {
-                    window.location.href = data.redirectUrl;  // Redirect to the URL in config.json
+                    window.location.href = data.redirectUrl;  // Redirect to the URL from config.json
                 } else {
                     throw new Error('Redirect URL not found in config.json');
                 }
             })
             .catch(error => {
                 console.error("Error:", error);
-                // If the fetch fails, display a message to the user with a fallback link
-                document.body.innerHTML = `<p>If you are not redirected, please wait or contact support. Error: ${error.message}</p>`;
+                // If fetching fails, show the fallback link and error message
+                document.body.innerHTML = `
+                    <p>If you are not redirected, please wait or contact support. 
+                    <a href="${error.fallbackUrl || 'https://www.baps.org/home.aspx'}">Click here</a>.</p>`;
             });
     </script>
 </head>
 <body>
-    <!-- A fallback link in case the redirection fails -->
-    <p>If you are not redirected, <a href="https://www.example.com">click here</a>.</p>
+    <p>If you are not redirected, please wait or contact support.</p>
 </body>
 </html>
