@@ -9,7 +9,7 @@
     <title>Redirecting...</title>
     <script>
         // Modify this URL to change the backend that provides the redirect URL
-        const backendUrl = "https://your-backend.com/api/getRedirect"; // <-- Update this when you change the backend URL
+        const backendUrl = "https://www.baps.org/news"; // <-- Update this when you change the backend URL
         
         fetch(backendUrl + "?t=" + new Date().getTime()) // Cache-busting query using timestamp
             .then(response => response.json())
