@@ -3,17 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Redirecting...</title>
     <script>
-      fetch("https://your-backend.com/api/getRedirect") // API to get the redirect URL
-        .then(response => response.json())
-        .then(data => {
-          window.location.href = data.url;
-        })
-        .catch(error => {
-          console.error("Error fetching redirect URL:", error);
-          window.location.href = "https://www.baps.org/home.aspx"; // Fallback URL
-        });
+        // Modify this URL to change the backend that provides the redirect URL
+        const backendUrl = "https://your-backend.com/api/getRedirect"; // <-- Update this when you change the backend URL
+        
+        fetch(backendUrl + "?t=" + new Date().getTime()) // Cache-busting query using timestamp
+            .then(response => response.json())
+            .then(data => {
+                window.location.href = data.url;  // Perform the redirect to the new URL
+            })
+            .catch(error => {
+                console.error("Error fetching redirect URL:", error);
+                window.location.href = "https://www.baps.org/home.aspx";  // Fallback URL
+            });
     </script>
 </head>
 <body>
