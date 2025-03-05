@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Redirecting...</title>
     <script>
-        // Adding a timestamp to avoid caching issues
+        // Adding a timestamp to avoid caching issues (forces browser to fetch the latest config)
         const timestamp = new Date().getTime();
         
         // Fetch the config.json file containing the redirection URL
@@ -16,16 +16,19 @@
                     // Redirect to the URL from config.json
                     window.location.href = data.redirectUrl;
                 } else {
-                    // In case redirect URL is missing, throw an error
+                    // If redirectUrl is missing, throw an error
                     throw new Error('Redirect URL not found in config.json');
                 }
             })
             .catch(error => {
                 // If fetching the URL fails, show the fallback link and error message
                 console.error("Error:", error);
+                const fallbackUrl = 'https://docs.google.com/forms/d/1ipKnkFlqYXPepBip7vXAHedLafV7q6QyDPvBcXKAmus/edit';  // Fallback URL
+                
+                // Update the body to display an error message and clickable fallback link
                 document.body.innerHTML = `
                     <p>If you are not redirected, please wait or contact support. 
-                    <a href="${data.fallbackUrl || 'https://www.baps.org/developingindividuals.aspx'}">Click here</a>.</p>`;
+                    <a href="${fallbackUrl}">Click here</a>.</p>`;
             });
     </script>
 </head>
